@@ -1,6 +1,6 @@
-= opengraph
+= OpenGraph
 
-Description goes here.
+OpenGraph is a very simple library for parsing Open Graph information from web sites.
 
 == Note on Patches/Pull Requests
  
