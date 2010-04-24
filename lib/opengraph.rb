@@ -8,6 +8,8 @@ module OpenGraph
   # is data to be found or <tt>false</tt> if there isn't.
   def self.fetch(uri)
     parse(RestClient.get(uri).body)
+  rescue RestClient::Exception, SocketError
+    false
   end
   
   def self.parse(html)
@@ -20,8 +22,6 @@ module OpenGraph
     end
     return false unless page.valid?
     page
-  rescue RestClient::Exception
-    false
   end
   
   TYPES = {
