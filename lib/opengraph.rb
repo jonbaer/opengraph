@@ -6,13 +6,16 @@ module OpenGraph
   # Fetch Open Graph data from the specified URI. Makes an
   # HTTP GET request and returns an OpenGraph::Object if there
   # is data to be found or <tt>false</tt> if there isn't.
-  def self.fetch(uri)
-    parse(RestClient.get(uri).body)
+  #
+  # Pass <tt>false</tt> for the second argument if you want to
+  # see invalid (i.e. missing a required attribute) data.
+  def self.fetch(uri, strict = true)
+    parse(RestClient.get(uri).body, strict)
   rescue RestClient::Exception, SocketError
     false
   end
   
-  def self.parse(html)
+  def self.parse(html, strict = true)
     doc = Nokogiri::HTML.parse(html)
     page = OpenGraph::Object.new
     doc.css('meta').each do |m|
@@ -20,7 +23,8 @@ module OpenGraph
         page[$1.gsub('-','_')] = m.attribute('content').to_s
       end
     end
-    return false unless page.valid?
+    return false if page.keys.empty?
+    return false unless page.valid? if strict
     page
   end
   

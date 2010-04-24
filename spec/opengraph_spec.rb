@@ -2,14 +2,23 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe OpenGraph do
   let(:rotten){ File.open(File.dirname(__FILE__) + '/examples/rottentomatoes.html').read }
+  let(:partial){ File.open(File.dirname(__FILE__) + '/examples/partial.html').read }
   
   describe '.parse' do
     it 'should return false if there isnt valid Open Graph info' do
       OpenGraph.parse("").should be_false
+      OpenGraph.parse(partial).should be_false
     end
     
     it 'should otherwise return an OpenGraph::Object' do
       OpenGraph.parse(rotten).should be_kind_of(OpenGraph::Object)
+    end
+    
+    context ' without strict mode' do
+      subject{ OpenGraph.parse(partial, false) }
+      
+      it { should_not be_false }
+      it { subject.title.should == 'Partialized' }
     end
   end
   
